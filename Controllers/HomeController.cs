@@ -1,32 +1,65 @@
 using System.Diagnostics;
+using microprojeto_aspnet_PersonalBudget.Data;
 using microprojeto_aspnet_PersonalBudget.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace microprojeto_aspnet_PersonalBudget.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        // Injeção de dependência do contexto do banco de dados
+        private readonly AppDbContext _context;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(AppDbContext context)
         {
-            _logger = logger;
+            _context = context;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string id)
         {
-            return View();
-        }
+            var filtros = new Filtros(id);
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
+            ViewBag.Filtros = filtros;
+            ViewBag.Etiquetas = _context.Etiquetas.ToList();
+            ViewBag.Statuses = _context.Statuses.ToList();
+            ViewBag.VencimentoValores = Filtros.VencimentoValoresFiltro;
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            IQueryable<Registro> consulta = _context.Registros
+                .Include(e => e.Etiqueta)
+                .Include(s => s.Status);
+
+            if (filtros.TemEtiqueta)
+            {
+                consulta = consulta.Where(t => t.EtiquetaId == filtros.EtiquetaId);
+            }
+            if (filtros.TemStatus)
+            {
+                consulta = consulta.Where(t => t.StatusId == filtros.StatusId);
+            }
+            if (filtros.TemVencimento)
+            {
+                var hoje = DateTime.Today;
+
+                if (filtros.EPassado)
+                {
+                    consulta = consulta.Where(t => t.DataVencimento < hoje);
+                }
+
+                if (filtros.EFuturo)
+                {
+                    consulta = consulta.Where(t => t.DataVencimento > hoje);
+                }
+
+                if (filtros.EHoje)
+                {
+                    consulta = consulta.Where(t => t.DataVencimento == hoje);
+                }
+            }
+
+            var registros = consulta.OrderBy(t => t.DataVencimento).ToList();
+
+            return View(registros);
         }
     }
 }
