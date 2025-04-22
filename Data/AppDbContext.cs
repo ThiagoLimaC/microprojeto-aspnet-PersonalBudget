@@ -14,6 +14,7 @@ namespace microprojeto_aspnet_PersonalBudget.Data
         public DbSet<Etiqueta> Etiquetas { get; set; }
         public DbSet<Status> Statuses { get; set; }
 
+        // Adiciona os dados iniciais para as tabelas Etiqueta e Status
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Etiqueta>().HasData(
