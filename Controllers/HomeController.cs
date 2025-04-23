@@ -16,6 +16,7 @@ namespace microprojeto_aspnet_PersonalBudget.Controllers
             _context = context;
         }
 
+
         public IActionResult Index(string id)
         {
             var filtros = new Filtros(id);
@@ -61,6 +62,15 @@ namespace microprojeto_aspnet_PersonalBudget.Controllers
 
             return View(registros);
         }
+        public IActionResult Adicionar()
+        {
+            ViewBag.Etiquetas = _context.Etiquetas.ToList();
+            ViewBag.Statuses = _context.Statuses.ToList();
+
+            var registro = new Registro { StatusId = "nao-pago" };
+
+            return View(registro);
+        }
 
         [HttpPost]
         public IActionResult Filtrar(string[] filtro)
@@ -79,6 +89,40 @@ namespace microprojeto_aspnet_PersonalBudget.Controllers
                 registroSelecionado.StatusId = "pago";
                 _context.SaveChanges();
             }
+
+            return RedirectToAction("Index", new { ID = id });
+        }
+
+        [HttpPost]
+        public IActionResult Adicionar(Registro registro)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Registros.Add(registro);
+                _context.SaveChanges();
+
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                ViewBag.Etiquetas = _context.Etiquetas.ToList();
+                ViewBag.Statuses = _context.Statuses.ToList();
+
+                return View(registro);
+            }
+        }
+
+        [HttpPost]
+        public IActionResult DeletarPagos(string id)
+        {
+            var paraDeletar = _context.Registros.Where(s => s.StatusId == "pago").ToList();
+
+            foreach (var registro in paraDeletar)
+            {
+                _context.Registros.Remove(registro);
+            }
+
+            _context.SaveChanges();
 
             return RedirectToAction("Index", new { ID = id });
         }

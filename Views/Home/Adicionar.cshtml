@@ -1,0 +1,44 @@
+﻿@model Registro
+
+<h2>Novo Registro</h2>
+<div asp-validation-summary="All" class="text-danger"></div>
+
+<form asp-action="Adicionar" asp-controller="Home" method="post">
+
+    <div class="mg-3">
+        <label asp-for="Nome" class="form-label">Nome</label>
+        <input asp-for="Nome" class="form-control"/>
+    </div>
+
+    <div class="mg-3">
+        <label asp-for="Valor" class="form-label">Valor</label>
+        <input type="text" asp-for="Valor" class="form-control" />
+    </div>
+
+
+    <div class="mb-3">
+        <label asp-for="EtiquetaId" class="form-label">Etiqueta</label>
+        <select asp-for="EtiquetaId"
+                class="form-select"
+                asp-items="@(new SelectList(ViewBag.Etiquetas, "EtiquetaId", "Nome"))">
+            <option value="todos"></option>
+        </select>
+    </div>
+
+    <div class="mg-3">
+        <label asp-for="DataVencimento" class="form-label">Data de Vencimento</label>
+        <input type="text" asp-for="DataVencimento" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="StatusId" class="form-label">Situação:</label>
+        <select asp-for="StatusId"
+                class="form-select"
+                asp-items="@(new SelectList(ViewBag.Statuses, "StatusId", "Nome"))">
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Adicionar</button>
+    <a asp-action="index" class="btn btn-primary">Cancelar</a>
+
+</form>

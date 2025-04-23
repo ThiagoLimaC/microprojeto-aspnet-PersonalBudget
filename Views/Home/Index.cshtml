@@ -92,7 +92,7 @@
 
         </form>
 
-        <form asp-action="DeletarPagos">
+        <form asp-action="DeletarPagos" method="post" asp-route-id="@ViewBag.Filtros.FiltroString">
             <a asp-action="Adicionar" asp-controller="Home" class="btn btn-success">Adicionar Registro</a>
             <button type="submit" class="btn btn-danger">Deletar registros pagos</button>
         </form>
