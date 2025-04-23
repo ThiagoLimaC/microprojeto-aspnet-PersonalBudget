@@ -1,8 +1,96 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿@model IEnumerable<Registro>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="row">
+    <div class="col-md-2">
+
+        <form asp-action="Filtrar" asp-controller="Home" method="post">
+
+            <div class="mb-3">
+                <label class="form-label">Etiqueta</label>
+                <select name="filtro"
+                class="form-select"
+                asp-items="@(new SelectList(ViewBag.Etiquetas, "EtiquetaId", "Nome", ViewBag.Filtros.EtiquetaId))">
+                    <option value="todos">Todos</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Data de Vencimento:</label>
+                <select name="filtro"
+                class="form-select"
+                asp-items="@(new SelectList(ViewBag.VencimentoValores, "Key", "Value", ViewBag.Filtros.Vencimento))">
+                    <option value="todos">Todos</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Situação:</label>
+                <select name="filtro"
+                class="form-select"
+                asp-items="@(new SelectList(ViewBag.Statuses, "StatusId", "Nome", ViewBag.Filtros.StatusId))">
+                    <option value="todos">Todos</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Filtrar</button>
+            <a asp-action="index" asp-route-id="" class="btn btn-primary">Limpar</a>
+
+        </form>
+
+    </div>
+
+    <div class="col-md-10">
+
+        <form asp-action="MarcarPago" asp-route-id="@ViewBag.Filtros.FiltroString" method="post">
+
+            <table class="table table-bordered table-striped mt-2">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Valor</th>
+                        <th>Data de Vencimento</th>
+                        <th>Etiqueta</th>
+                        <th>Status</th>
+                        <th class="w-25"></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @foreach (Registro registro in Model)
+                    {
+                        string atrasado = registro.Atrasado ? "bg-warning" : "";
+
+
+                        <tr>  
+                           <td>@registro.Nome</td>  
+                           <td>R$ @registro.Valor.ToString("N2", new System.Globalization.CultureInfo("pt-BR"))</td>  
+                           <td>@registro.Etiqueta.Nome</td>  
+                           <td class="@atrasado">@registro.DataVencimento?.ToShortDateString()</td>  
+                           <td class="@atrasado">@registro.Status.Nome</td>  
+                           <td>  
+
+                               @if (registro.StatusId == "nao-pago")  
+                               {  
+                                   <button   
+                                       type="submit"   
+                                       class="btn btn-primary btn-sm"  
+                                       name="@nameof(Registro.Id)"  
+                                       value="@registro.Id">  
+                                       Pagar  
+                                   </button>  
+                               }  
+
+                           </td>  
+                        </tr>
+
+                    }
+
+                </tbody>
+
+
+            </table>
+
+        </form>
+
+    </div>
 </div>
