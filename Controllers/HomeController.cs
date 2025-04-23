@@ -61,5 +61,26 @@ namespace microprojeto_aspnet_PersonalBudget.Controllers
 
             return View(registros);
         }
+
+        [HttpPost]
+        public IActionResult Filtrar(string[] filtro)
+        {
+            string id = string.Join("-", filtro);
+            return RedirectToAction("Index", new { ID = id });
+        }
+
+        [HttpPost]
+        public IActionResult MarcarPago([FromRoute] string id, Registro registroSelecionado)
+        {
+            registroSelecionado = _context.Registros.Find(registroSelecionado.Id);
+
+            if (registroSelecionado != null)
+            {
+                registroSelecionado.StatusId = "pago";
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("Index", new { ID = id });
+        }
     }
 }
