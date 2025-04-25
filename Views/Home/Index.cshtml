@@ -1,5 +1,7 @@
 ﻿@model IEnumerable<Registro>
 
+<h2 class="text-md-center text">Lista de Despesas</h2>
+
 <div class="row">
     <div class="col-md-2">
 
@@ -8,16 +10,16 @@
             <div class="mb-3">
                 <label class="form-label">Etiqueta</label>
                 <select name="filtro"
-                class="form-select"
-                asp-items="@(new SelectList(ViewBag.Etiquetas, "EtiquetaId", "Nome", ViewBag.Filtros.EtiquetaId))">
+                        class="form-select"
+                        asp-items="@(new SelectList(ViewBag.Etiquetas, "EtiquetaId", "Nome", ViewBag.Filtros.EtiquetaId))">
                     <option value="todos">Todos</option>
                 </select>
             </div>
             <div class="mb-3">
                 <label class="form-label">Data de Vencimento:</label>
                 <select name="filtro"
-                class="form-select"
-                asp-items="@(new SelectList(ViewBag.VencimentoValores, "Key", "Value", ViewBag.Filtros.Vencimento))">
+                        class="form-select"
+                        asp-items="@(new SelectList(ViewBag.VencimentoValores, "Key", "Value", ViewBag.Filtros.Vencimento))">
                     <option value="todos">Todos</option>
                 </select>
             </div>
@@ -25,8 +27,8 @@
             <div class="mb-3">
                 <label class="form-label">Situação:</label>
                 <select name="filtro"
-                class="form-select"
-                asp-items="@(new SelectList(ViewBag.Statuses, "StatusId", "Nome", ViewBag.Filtros.StatusId))">
+                        class="form-select"
+                        asp-items="@(new SelectList(ViewBag.Statuses, "StatusId", "Nome", ViewBag.Filtros.StatusId))">
                     <option value="todos">Todos</option>
                 </select>
             </div>
@@ -38,12 +40,12 @@
 
     </div>
 
-    <div class="col-md-10">
+    <div class="col-md-8">
 
         <form asp-action="MarcarPago" asp-route-id="@ViewBag.Filtros.FiltroString" method="post">
 
             <table class="table table-bordered table-striped mt-2">
-                <thead>
+                <thead class="table-dark">
                     <tr>
                         <th>Nome</th>
                         <th>Valor</th>
@@ -61,30 +63,28 @@
                         string atrasado = registro.Atrasado ? "bg-warning" : "";
 
 
-                        <tr>  
-                           <td>@registro.Nome</td>  
-                           <td>R$ @registro.Valor.ToString("N2", new System.Globalization.CultureInfo("pt-BR"))</td>  
-                           <td>@registro.Etiqueta.Nome</td>  
-                           <td class="@atrasado">@registro.DataVencimento?.ToShortDateString()</td>  
-                           <td class="@atrasado">@registro.Status.Nome</td>  
-                           <td>  
+                        <tr>
+                            <td>@registro.Nome</td>
+                            <td>R$ @registro.Valor.ToString("N2", new System.Globalization.CultureInfo("pt-BR"))</td>
+                            <td class="@atrasado">@registro.DataVencimento?.ToShortDateString()</td>
+                            <td>@registro.Etiqueta.Nome</td>
+                            <td class="@atrasado">@registro.Status.Nome</td>
+                            <td>
 
-                               @if (registro.StatusId == "nao-pago")  
-                               {  
-                                   <button   
-                                       type="submit"   
-                                       class="btn btn-primary btn-sm"  
-                                       name="@nameof(Registro.Id)"  
-                                       value="@registro.Id">  
-                                       Pagar  
-                                   </button>  
-                               }  
+                                @if (registro.StatusId == "nao-pago")
+                                {
+                                    <button type="submit"
+                                            class="btn btn-primary btn-sm"
+                                            name="@nameof(Registro.Id)"
+                                            value="@registro.Id">
+                                        Pagar
+                                    </button>
+                                }
 
-                           </td>  
+                            </td>
                         </tr>
 
                     }
-
                 </tbody>
 
 
@@ -97,5 +97,30 @@
             <button type="submit" class="btn btn-danger">Deletar registros pagos</button>
         </form>
 
+    </div>
+
+    <div class="col-md-2">
+        <table class="table table-bordered table-striped mt-2 ml-2">
+            <thead class="table-dark">
+                <tr>
+                    <th>Dados dos registros</th>
+                    <th>Valor</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="fw-bold bg-warning-subtle">Total em despesas registradas: </td>
+                    <td class="fw-bold bg-warning-subtle">R$@ViewBag.Total.ToString("N2", new System.Globalization.CultureInfo("pt-BR"))</td>
+                </tr>
+                <tr>
+                    <td class="fw-bold bg-danger-subtle">Total em despesas não pagas: </td>
+                    <td class="fw-bold bg-danger-subtle">R$@ViewBag.TotalNaoPago.ToString("N2", new System.Globalization.CultureInfo("pt-BR"))</td>
+                </tr>
+                <tr>
+                    <td class="fw-bold bg-success-subtle">Total líquido: </td>
+                    <td class="fw-bold bg-success-subtle">R$@ViewBag.TotalLiquido.ToString("N2", new System.Globalization.CultureInfo("pt-BR"))</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </div>

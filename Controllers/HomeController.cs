@@ -60,6 +60,11 @@ namespace microprojeto_aspnet_PersonalBudget.Controllers
 
             var registros = consulta.OrderBy(t => t.DataVencimento).ToList();
 
+            ViewBag.Total = registros.Sum(t => t.Valor);
+            ViewBag.TotalNaoPago = registros.Where(t => t.StatusId == "nao-pago").Sum(t => t.Valor);
+            ViewBag.TotalLiquido = 4000 - ViewBag.Total;
+
+
             return View(registros);
         }
         public IActionResult Adicionar()
@@ -72,6 +77,8 @@ namespace microprojeto_aspnet_PersonalBudget.Controllers
             return View(registro);
         }
 
+        // ao clicar no botão Filtrar o método redireciona para o Index
+        // passando o novo id do filtro
         [HttpPost]
         public IActionResult Filtrar(string[] filtro)
         {
@@ -79,6 +86,9 @@ namespace microprojeto_aspnet_PersonalBudget.Controllers
             return RedirectToAction("Index", new { ID = id });
         }
 
+        // ao clicar no botão Pagar, o método busca o registro no banco
+        // que corresponde ao id passado e altera o status para pago
+        // e redireciona para o Index com o id do filtro atual
         [HttpPost]
         public IActionResult MarcarPago([FromRoute] string id, Registro registroSelecionado)
         {
