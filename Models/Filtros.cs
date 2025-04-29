@@ -36,6 +36,6 @@
         // Propriedades para verificar o tipo de vencimento
         public bool EPassado => Vencimento.ToLower() == "passado";
         public bool EFuturo => Vencimento.ToLower() == "futuro";
-        public bool EHoje => Vencimento.ToLower() == "passado";
+        public bool EHoje => Vencimento.ToLower() == "hoje";
     }
 }
